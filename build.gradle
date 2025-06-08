@@ -1,0 +1,92 @@
+plugins {
+    id("fabric-loom") version("1.10-SNAPSHOT") apply(false)
+
+    // https://github.com/ReplayMod/preprocessor
+    // https://github.com/Fallen-Breath/preprocessor
+    id("com.replaymod.preprocess") version("0a04a5668b")
+
+    // https://github.com/GradleUp/shadow
+    id("com.gradleup.shadow") version("8.3.6") apply(false)
+
+    // https://github.com/hierynomus/license-gradle-plugin
+    id("com.github.hierynomus.license") version("0.16.1") apply(false)
+
+    // https://github.com/Fallen-Breath/yamlang
+    id("me.fallenbreath.yamlang") version("1.4.1") apply(false)
+
+    // https://github.com/firstdarkdev/modpublisher
+    id("com.hypherionmc.modutils.modpublisher") version("2.1.7") apply(false)
+
+    id("maven-publish")
+}
+
+version = project.mod_version
+group = project.group
+
+preprocess {
+    strictExtraMappings = false
+
+    var mc11404 = createNode("1.14.4", 1_14_04, "")
+    var mc11502 = createNode("1.15.2", 1_15_02, "")
+    var mc11605 = createNode("1.16.5", 1_16_05, "")
+    var mc11701 = createNode("1.17.1", 1_17_01, "")
+    var mc11802 = createNode("1.18.2", 1_18_02, "")
+    var mc11904 = createNode("1.19.4", 1_19_04, "")
+    var mc12001 = createNode("1.20.1", 1_20_01, "")
+    var mc12006 = createNode("1.20.6", 1_20_06, "")
+    var mc12101 = createNode("1.21.1", 1_21_01, "")
+    var mc12104 = createNode("1.21.4", 1_21_04, "")
+    var mc12105 = createNode("1.21.5", 1_21_05, "")
+
+    mc12006.link(mc12001, file("versions/mapping_12006_12001.txt"))
+    mc12001.link(mc11904, file("versions/mapping_12001_11904.txt"))
+    mc11904.link(mc11802, file("versions/mapping_11904_11802.txt"))
+    mc11802.link(mc11701, file("versions/mapping_11802_11701.txt"))
+    mc11701.link(mc11605, file("versions/mapping_11701_11605.txt"))
+    mc11605.link(mc11502, file("versions/mapping_11605_11502.txt"))
+    mc11502.link(mc11404, file("versions/mapping_11502_11404.txt"))
+
+    mc12006.link(mc12101, file("versions/mapping_12006_12101.txt"))
+    mc12101.link(mc12104, file("versions/mapping_12101_12104.txt"))
+    mc12104.link(mc12105, file("versions/mapping_12104_12105.txt"))
+}
+
+tasks.register("buildAndGather") {
+    subprojects {
+        dependsOn(it.tasks.build)
+    }
+    doLast {
+        println("Gathering builds")
+
+        Closure buildLibs = { p -> p.buildDir.toPath().resolve("libs") }
+        delete(fileTree(buildLibs(rootProject)) { include("*") })
+        subprojects {
+            print("Copying files for ${it.name}...    ")
+            Project p = it
+            copy {
+                from(buildLibs(p)) {
+                    include("*.jar")
+                    exclude("*-dev.jar", "*-sources.jar", "*-shadow.jar")
+                }
+                into(buildLibs(rootProject))
+                duplicatesStrategy = DuplicatesStrategy.INCLUDE
+            }
+            println("Succeeded")
+        }
+    }
+}
+
+tasks.register("publishAll") {
+    mustRunAfter(rootProject.tasks.buildAndGather)
+    subprojects {
+        dependsOn(it.tasks.publishMod
+                //, it.tasks.publish
+        )
+    }
+}
+
+tasks.register("publishLocal") {
+    subprojects {
+        dependsOn(it.tasks.publishToMavenLocal)
+    }
+}

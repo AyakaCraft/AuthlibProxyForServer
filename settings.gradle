@@ -1,0 +1,37 @@
+import groovy.json.JsonSlurper
+
+pluginManagement {
+    repositories {
+        maven {
+            name = "Fabric"
+            url = "https://maven.fabricmc.net/"
+        }
+        maven {
+            name = "Jitpack"
+            url = "https://jitpack.io"
+        }
+        maven {
+            url = "https://maven.firstdark.dev/releases" // For ModPublisher
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+    resolutionStrategy {
+        eachPlugin {
+            switch (requested.id.id) {
+                case "com.replaymod.preprocess": {
+                    useModule("com.github.Fallen-Breath:preprocessor:${requested.version}")
+                    break
+                }
+            }
+        }
+    }
+}
+
+new JsonSlurper().parseText(file("settings.json").text).versions.each { String version ->
+    include(":$version")
+    project(":$version").with {
+        projectDir = file("versions/$version")
+        buildFileName = "../../common.gradle"
+    }
+}

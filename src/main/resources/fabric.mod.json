@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "id": "${id}",
+  "version": "${version}",
+  "name": "${name}",
+  "description": "Authlib proxy for server",
+  "authors": [
+    "Calboot",
+    "IceCang"
+  ],
+  "contact": {
+    "homepage": "https://github.com/AyakaCraft/AuthlibProxyForServer",
+    "sources": "https://github.com/AyakaCraft/AuthlibProxyForServer",
+    "issues": "https://github.com/AyakaCraft/AuthlibProxyForServer/issues"
+  },
+  "license": "GPL-3.0",
+  "icon": "assets/authlib-proxy-for-server/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "server": [
+      "com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer"
+    ]
+  },
+  "mixins": [
+    "authlib-proxy-for-server.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "${loader_dependency}",
+    "minecraft": "${minecraft_dependency}"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "Discord": "https://discord.gg/r2WyWrx5vw"
+      }
+    }
+  }
+}
