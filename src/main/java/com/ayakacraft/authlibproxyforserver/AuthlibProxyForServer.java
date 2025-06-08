@@ -20,13 +20,46 @@
 
 package com.ayakacraft.authlibproxyforserver;
 
-import net.fabricmc.api.DedicatedServerModInitializer;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-public class AuthlibProxyForServer implements DedicatedServerModInitializer {
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
-    @Override
-    public void onInitializeServer() {
+public class AuthlibProxyForServer {
 
+    private static final Path configPath = Paths.get("config/authlib.proxy.json");
+
+    public static final Logger LOGGER = LogManager.getLogger("AuthlibProxyForServer");
+
+    public static final ProxyConfig config;
+
+    static {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        ProxyConfig c = new ProxyConfig(false, "HTTP", "127.0.0.1", 7897);
+        if (Files.isRegularFile(configPath)) {
+            try {
+                String str = readString(configPath);
+                c = gson.fromJson(str, ProxyConfig.class);
+            } catch (Throwable e) {
+                LOGGER.error("Failed to read config file for authproxy", e);
+            }
+        }
+        try {
+            Files.write(configPath, gson.toJson(c).getBytes(StandardCharsets.UTF_8));
+        } catch (IOException ignored) {
+        }
+        config = c;
+    }
+
+    public static String readString(Path path) throws IOException {
+        return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(Files.readAllBytes(path))).toString();
     }
 
 }

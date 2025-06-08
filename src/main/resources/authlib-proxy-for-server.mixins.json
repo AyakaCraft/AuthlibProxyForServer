@@ -4,6 +4,7 @@
   "package": "com.ayakacraft.authlibproxyforserver.mixin",
   "compatibilityLevel": "${COMPATIBILITY_LEVEL}",
   "mixins": [
+    "ServerMainMixin"
   ],
   "client": [
   ],

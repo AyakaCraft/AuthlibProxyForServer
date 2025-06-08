@@ -6,7 +6,6 @@ apply plugin: "com.replaymod.preprocess"
 apply plugin: "com.hypherionmc.modutils.modpublisher"
 apply plugin: "com.github.hierynomus.license"
 apply plugin: "maven-publish"
-apply plugin: "me.fallenbreath.yamlang"
 
 Map<String, ?> properties = project.getProperties()
 
@@ -46,14 +45,6 @@ repositories {
         name = "Modrinth"
         url = "https://api.modrinth.com/maven"
     }
-    maven {
-        name = "Terraformers"
-        url = "https://maven.terraformersmc.com/"
-    }
-    maven {
-        name = "Nucleoid"
-        url = "https://maven.nucleoid.xyz/"
-    }
 
 }
 
@@ -73,14 +64,6 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
 
     if (!releasing) {
-        if (mcVersion >= 11500) {
-            modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}")
-            modRuntimeOnly("com.terraformersmc:modmenu:${project.modmenu_version}")
-            if (mcVersion >= 12006) {
-                modRuntimeOnly("eu.pb4:placeholder-api:${project.placeholder_version}")
-            }
-        }
-
         if (mcVersion >= 11600) {
             if (mcVersion < 11900) {
                 modRuntimeOnly("maven.modrinth:lazydfu:0.1.2")
@@ -95,7 +78,6 @@ dependencies {
 }
 
 var MIXIN_CONFIG_PATH = "authlib-proxy-for-server.mixins.json"
-var LANG_DIR = "assets/authlib-proxy-for-server/lang"
 var JAVA_COMPATIBILITY
 if (mcVersion >= 12005) {
     JAVA_COMPATIBILITY = JavaVersion.VERSION_21
@@ -129,12 +111,6 @@ loom {
             ideConfigGenerated false
         }
     }
-}
-
-// https://github.com/Fallen-Breath/yamlang
-yamlang {
-    targetSourceSets = [sourceSets.main]
-    inputDir = LANG_DIR
 }
 
 shadowJar {
@@ -291,13 +267,11 @@ publisher {
     }
 
     curseDepends {
-        required "carpet"
-        optional "carpet-tis-addition", "guglecarpetaddition"
+        required "fabric-api"
     }
 
     modrinthDepends {
-        required "carpet"
-        optional "carpet-tis-addition", "gca"
+        required "fabric-api"
     }
 
 }

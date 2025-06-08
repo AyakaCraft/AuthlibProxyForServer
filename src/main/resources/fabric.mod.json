@@ -16,23 +16,11 @@
   "license": "GPL-3.0",
   "icon": "assets/authlib-proxy-for-server/icon.png",
   "environment": "server",
-  "entrypoints": {
-    "server": [
-      "com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer"
-    ]
-  },
   "mixins": [
     "authlib-proxy-for-server.mixins.json"
   ],
   "depends": {
     "fabricloader": "${loader_dependency}",
     "minecraft": "${minecraft_dependency}"
-  },
-  "custom": {
-    "modmenu": {
-      "links": {
-        "Discord": "https://discord.gg/r2WyWrx5vw"
-      }
-    }
   }
 }
