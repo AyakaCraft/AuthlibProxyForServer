@@ -1,3 +1,3 @@
 ## General
 
-Basic features
+- No more crash when fail to parse proxy
