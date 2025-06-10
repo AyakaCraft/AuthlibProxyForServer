@@ -7,7 +7,7 @@
 [![MC 版本](https://cf.way2muchnoise.eu/versions/MC%20Version_authlibproxyforserver_all.svg)](https://www.curseforge.com/minecraft/mc-mods/authlibproxyforserver)
 [![Release](https://img.shields.io/github/v/release/AyakaCraft/AuthlibProxyForServer?label=Release&include_prereleases)](https://github.com/AyakaCraft/AuthlibProxyForServer/releases)
 
-[简体中文](README_zh.md) ｜ English
+简体中文 ｜ [English](README.md)
 
 Copyright (c) 2025  Calboot and contributors
 

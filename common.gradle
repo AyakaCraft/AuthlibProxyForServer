@@ -266,14 +266,6 @@ publisher {
         setJavaVersions([JavaVersion.VERSION_1_8])
     }
 
-    curseDepends {
-        required "fabric-api"
-    }
-
-    modrinthDepends {
-        required "fabric-api"
-    }
-
 }
 
 // configure the maven publication
