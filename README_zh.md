@@ -5,6 +5,7 @@
 [![CurseForge 下载量](https://cf.way2muchnoise.eu/full_authlibproxyforserver_CurseForge%20Downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/authlibproxyforserver)
 [![GitHub 下载量](https://img.shields.io/github/downloads/AyakaCraft/AuthlibProxyForServer/total?label=Github%20Downloads&logo=github)](https://github.com/AyakaCraft/AuthlibProxyForServer/releases)
 [![MC 版本](https://cf.way2muchnoise.eu/versions/MC%20Version_authlibproxyforserver_all.svg)](https://www.curseforge.com/minecraft/mc-mods/authlibproxyforserver)
+[![Build & Publish](https://github.com/AyakaCraft/AuthlibProxyForServer/actions/workflows/release.yml/badge.svg)](https://github.com/AyakaCraft/AuthlibProxyForServer/actions/workflows/release.yml)
 [![Release](https://img.shields.io/github/v/release/AyakaCraft/AuthlibProxyForServer?label=Release&include_prereleases)](https://github.com/AyakaCraft/AuthlibProxyForServer/releases)
 
 简体中文 ｜ [English](README.md)
