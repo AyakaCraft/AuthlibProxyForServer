@@ -1,6 +1,6 @@
 # AuthlibProxyForServer
 
-[![License](https://img.shields.io/static/v1?label=License&message=gpl-v3.0&color=red)](http://www.gnu.org/licenses/gpl-3.0.txt)
+[![License](https://img.shields.io/static/v1?label=License&message=gpl-v3.0&color=red)](https://www.gnu.org/licenses/gpl-3.0.txt)
 [![Modrinth Downloads](https://img.shields.io/modrinth/dt/authlibproxyforserver?label=Modrinth%20Downloads)](https://modrinth.com/mod/authlibproxyforserver)
 [![CurseForge Downloads](https://cf.way2muchnoise.eu/full_authlibproxyforserver_CurseForge%20Downloads.svg)](https://www.curseforge.com/minecraft/mc-mods/authlibproxyforserver)
 [![GitHub Downloads](https://img.shields.io/github/downloads/AyakaCraft/AuthlibProxyForServer/total?label=Github%20Downloads&logo=github)](https://github.com/AyakaCraft/AuthlibProxyForServer/releases)
@@ -27,7 +27,9 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 
 ## Conclusion
 
-Authlib proxy for server.
+Authlib proxy for and only for servers
+
+Sets the proxy for contacting Mojang server
 
 Mostly based on [Fallen-Breath's template](https://github.com/Fallen-Breath/fabric-mod-template)
 

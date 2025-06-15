@@ -240,11 +240,13 @@ license {
 tasks.classes.dependsOn(tasks.licenseFormatMain)
 tasks.testClasses.dependsOn(tasks.licenseFormatTest)
 
+// https://github.com/firstdarkdev/modpublisher
 publisher {
 
     apiKeys {
         modrinth System.getenv("MODRINTH_TOKEN") ?: "unset"
         curseforge System.getenv("CURSEFORGE_TOKEN") ?: "unset"
+        github System.getenv("GITHUB_TOKEN") ?: "unset"
     }
 
     //setDebug(true)
@@ -264,6 +266,11 @@ publisher {
 
     if (mcVersion < 11700) {
         setJavaVersions([JavaVersion.VERSION_1_8])
+    }
+
+    github {
+        repo = System.getenv("REPO")
+        tag = System.getenv("TAG")
     }
 
 }

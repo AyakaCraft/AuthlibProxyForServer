@@ -48,6 +48,9 @@ public class ServerMainMixin {
             p = AuthlibProxyForServer.config.createProxy();
         } catch (Throwable e) {
             AuthlibProxyForServer.LOGGER.error("Could not set proxy for authlib", e);
+            AuthlibProxyForServer.LOGGER.warn("Your proxy is down!!!");
+            AuthlibProxyForServer.LOGGER.warn("Your proxy is down!!!");
+            AuthlibProxyForServer.LOGGER.warn("Your proxy is down!!!");
         }
         AuthlibProxyForServer.LOGGER.info("Proxy for authlib: {}", p);
         return p;

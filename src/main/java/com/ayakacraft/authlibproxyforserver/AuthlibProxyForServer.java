@@ -32,7 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class AuthlibProxyForServer {
+public final class AuthlibProxyForServer {
 
     private static final Path configPath = Paths.get("config/authlib.proxy.json");
 
