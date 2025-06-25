@@ -53,3 +53,36 @@ Mostly based on [Fallen-Breath's template](https://github.com/Fallen-Breath/fabr
   "port": 7897 // [0,65536)
 }
 ```
+
+## EOL
+
+### Currently supported versions
+
+Currently, the following Minecraft versions are actively supported with new features and bug fixes
+
+| Minecraft Version | Support Until                      |
+|-------------------|------------------------------------|
+| 1.14.4            | ✔️ Long Term Support               |
+| 1.15.2            | ✔️ Long Term Support               |
+| 1.16.5            | ✔️ Long Term Support               |
+| 1.17.1            | ✔️ Long Term Support               |
+| 1.18.2            | ✔️ Long Term Support               |
+| 1.19.4            | ✔️ Long Term Support               |
+| 1.20.1            | ✔️ Long Term Support               |
+| 1.20.6            | ✔️ Long Term Support               |
+| 1.21.1, 1.21.4    | 🕒 When Minecraft 1.22 is released |
+| 1.21.5, 1.21.6    | 🕒 To be determined                |
+
+### End-of-life versions
+
+The following Minecraft versions are out of the support range. There's no support for these Minecraft versions, unless some critical bugs occur
+
+| Minecraft Version | Last Version                                                                      | Release Date |
+|-------------------|-----------------------------------------------------------------------------------|--------------|
+
+### Scheduled to be supported versions
+
+The following Minecraft versions are scheduled to be supported in the later versions
+
+| Minecraft Version | Support Starts |
+|-------------------|----------------|

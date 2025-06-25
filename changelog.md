@@ -1,4 +1,3 @@
 ## General
 
-- No more crash when fail to parse proxy
-- New icon
+- Added support for Minecraft 1.21.6
