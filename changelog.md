@@ -1,3 +1,4 @@
 ## General
 
-- Added support for Minecraft 1.21.6
+- ***Added*** command `/authproxy` to configure the proxy
+- Support for Minecraft 1.21.6

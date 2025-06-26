@@ -41,7 +41,18 @@ public class ServerMainMixin {
             index = 0
     )
     private static Proxy useDynamicProxy(Proxy proxy) {
-        return AuthlibProxyForServer.config.createProxy();
+        Proxy p = proxy;
+        try {
+            p = AuthlibProxyForServer.config.createProxy();
+        } catch (Throwable e) {
+            AuthlibProxyForServer.LOGGER.error("Could not set proxy for authlib", e);
+            AuthlibProxyForServer.LOGGER.warn("Your proxy is down!!!");
+            AuthlibProxyForServer.LOGGER.warn("Your proxy is down!!!");
+            AuthlibProxyForServer.LOGGER.warn("Your proxy is down!!!");
+        }
+        AuthlibProxyForServer.LOGGER.info("Proxy for authlib: {}", p);
+        AuthlibProxyForServer.proxy = p;
+        return p;
     }
 
 }

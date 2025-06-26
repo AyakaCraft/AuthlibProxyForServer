@@ -21,6 +21,7 @@
 package com.ayakacraft.authlibproxyforserver.mixin;
 
 import com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer;
+import com.ayakacraft.authlibproxyforserver.ProxyConfig;
 import net.minecraft.server.Main;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -47,12 +48,17 @@ public class ServerMainMixin {
         try {
             p = AuthlibProxyForServer.config.createProxy();
         } catch (Throwable e) {
-            AuthlibProxyForServer.LOGGER.error("Could not set proxy for authlib", e);
+            if (e instanceof ProxyConfig.InvalidProxyConfigException) {
+                AuthlibProxyForServer.LOGGER.error(e);
+            } else {
+                AuthlibProxyForServer.LOGGER.error("Could not set proxy for authlib", e);
+            }
             AuthlibProxyForServer.LOGGER.warn("Your proxy is down!!!");
             AuthlibProxyForServer.LOGGER.warn("Your proxy is down!!!");
             AuthlibProxyForServer.LOGGER.warn("Your proxy is down!!!");
         }
         AuthlibProxyForServer.LOGGER.info("Proxy for authlib: {}", p);
+        AuthlibProxyForServer.proxy = p;
         return p;
     }
 

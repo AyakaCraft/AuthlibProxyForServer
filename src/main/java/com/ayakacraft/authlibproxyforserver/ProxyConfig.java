@@ -20,6 +20,8 @@
 
 package com.ayakacraft.authlibproxyforserver;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -27,45 +29,114 @@ import java.net.UnknownHostException;
 
 public class ProxyConfig {
 
-    private final boolean enabled;
+    public boolean enabled = false;
 
-    private final String type;
+    public ProxyType type = ProxyType.HTTP;
 
-    private final String host;
+    public String host = "127.0.0.1";
 
-    private final int port;
+    public short port = 7897;
 
-    public ProxyConfig(boolean enabled, String type, String host, int port) {
-        this.enabled = enabled;
-        this.type = type;
-        this.host = host;
-        this.port = port;
+    public ProxyConfig() {
     }
 
-    public void validate() throws IllegalArgumentException {
-        if (!enabled || "DIRECT".equalsIgnoreCase(type)) {
-            return;
-        }
-        if (!"HTTP".equalsIgnoreCase(type) && !"SOCKS".equalsIgnoreCase(type)) {
-            throw new IllegalArgumentException("Invalid proxy type: " + type);
+    public ProxyConfig validate() throws InvalidProxyConfigException {
+        if (!enabled) {
+            return this;
         }
         try {
             //noinspection ResultOfMethodCallIgnored
             InetAddress.getAllByName(host);
         } catch (UnknownHostException e) {
-            throw new IllegalArgumentException("Unknown proxy host: " + host, e);
+            throw new InvalidProxyConfigException(InvalidReason.HOST, host, e);
         }
-        if (port < 0 || port > 65535) {
-            throw new IllegalArgumentException("Invalid proxy port: " + port);
+        if (port < 0) {
+            throw new InvalidProxyConfigException(InvalidReason.PORT, port);
+        }
+        return this;
+    }
+
+    public Proxy createProxy() throws InvalidProxyConfigException {
+        validate();
+        if (enabled) {
+            return new DynamicProxy(this);
+        } else {
+            return Proxy.NO_PROXY;
         }
     }
 
-    public Proxy createProxy() throws IllegalArgumentException {
-        validate();
-        if (enabled && !"DIRECT".equals(type)) {
-            return new Proxy(Proxy.Type.valueOf(type.toUpperCase()), new InetSocketAddress(host, port));
-        } else {
-            return Proxy.NO_PROXY;
+    private static class DynamicProxy extends Proxy {
+
+        private final ProxyConfig config;
+
+        public DynamicProxy(ProxyConfig config) {
+            super(config.type.real, new InetSocketAddress(config.host, config.port));
+            this.config = config;
+        }
+
+        @Override
+        public Proxy.Type type() {
+            return config.type.real;
+        }
+
+        @Override
+        public InetSocketAddress address() {
+            return new InetSocketAddress(config.host, config.port);
+        }
+
+    }
+
+    public static class InvalidProxyConfigException extends Exception {
+
+        public final InvalidReason reason;
+
+        public final Object value;
+
+        public InvalidProxyConfigException(InvalidReason reason, Object value) {
+            this.reason = reason;
+            this.value = value;
+        }
+
+        public InvalidProxyConfigException(InvalidReason reason, Object value, Throwable cause) {
+            super(cause);
+            this.reason = reason;
+            this.value = value;
+        }
+
+        @Override
+        public String getMessage() {
+            return reason.message + ": " + value;
+        }
+
+    }
+
+    public enum InvalidReason {
+
+        TYPE("Invalid proxy type"),
+        HOST("Unknown proxy host"),
+        PORT("Invalid proxy port");
+
+        public final String message;
+
+        InvalidReason(String message) {
+            this.message = message;
+        }
+
+    }
+
+    public enum ProxyType {
+
+        @SerializedName("HTTP")
+        HTTP(Proxy.Type.HTTP),
+
+        @SerializedName("SOCKS")
+        SOCKS(Proxy.Type.SOCKS),
+        ;
+
+        public final Proxy.Type real;
+
+        ProxyType(Proxy.Type real) {
+            this.real = real;
         }
     }
 

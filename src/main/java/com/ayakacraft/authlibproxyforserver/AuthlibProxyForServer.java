@@ -26,6 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.net.Proxy;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -40,26 +41,37 @@ public final class AuthlibProxyForServer {
 
     public static final ProxyConfig config;
 
+    public static Proxy proxy;
+
+    public static Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
     static {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        ProxyConfig c = new ProxyConfig(false, "HTTP", "127.0.0.1", 7897);
+        ProxyConfig c = new ProxyConfig();
         if (Files.isRegularFile(configPath)) {
             try {
                 String str = readString(configPath);
-                c = gson.fromJson(str, ProxyConfig.class);
+                c = GSON.fromJson(str, ProxyConfig.class);
             } catch (Throwable e) {
                 LOGGER.error("Failed to read config file for authproxy", e);
             }
         }
         try {
-            Files.write(configPath, gson.toJson(c).getBytes(StandardCharsets.UTF_8));
+            saveConfig(c);
         } catch (IOException ignored) {
         }
         config = c;
     }
 
+    public static void saveConfig(ProxyConfig config) throws IOException {
+        writeString(configPath, GSON.toJson(config));
+    }
+
     public static String readString(Path path) throws IOException {
         return StandardCharsets.UTF_8.decode(ByteBuffer.wrap(Files.readAllBytes(path))).toString();
+    }
+
+    public static void writeString(Path path, String str) throws IOException {
+        Files.write(path, str.getBytes(StandardCharsets.UTF_8));
     }
 
 }

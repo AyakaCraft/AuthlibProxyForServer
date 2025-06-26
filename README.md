@@ -10,7 +10,7 @@
 
 [简体中文](README_zh.md) ｜ English
 
-Copyright (c) 2025  Calboot and contributors
+Copyright (c) 2025 Calboot and contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -43,12 +43,13 @@ Mostly based on [Fallen-Breath's template](https://github.com/Fallen-Breath/fabr
 ## Usage
 
 - Install this mod to your server (dedicated only)
-- Start the server once
-- Edit `$SERVER_ROOT$/config/authlib.proxy.json`, it should look like below
+- Start the server
+- Run `/authproxy` to configure the proxy
+
 ```json5
 {
   "enabled": false, // set to true to enable
-  "type": "HTTP", // or DIRECT, SOCKS
+  "type": "HTTP", // or SOCKS
   "host": "127.0.0.1", // either IP or host name
   "port": 7897 // [0,65536)
 }
@@ -77,8 +78,8 @@ Currently, the following Minecraft versions are actively supported with new feat
 
 The following Minecraft versions are out of the support range. There's no support for these Minecraft versions, unless some critical bugs occur
 
-| Minecraft Version | Last Version                                                                      | Release Date |
-|-------------------|-----------------------------------------------------------------------------------|--------------|
+| Minecraft Version | Last Version | Release Date |
+|-------------------|--------------|--------------|
 
 ### Scheduled to be supported versions
 

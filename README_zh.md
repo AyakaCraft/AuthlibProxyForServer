@@ -10,7 +10,7 @@
 
 简体中文 ｜ [English](README.md)
 
-Copyright (c) 2025  Calboot and contributors
+Copyright (c) 2025 Calboot and contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -43,12 +43,13 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 ## 用法
 
 - 安装此模组到你的服务器（仅限物理服务端）
-- 启动一次服务器
-- 编辑 `$SERVER_ROOT$/config/authlib.proxy.json`
+- 启动服务器
+- 运行 `/authproxy` 命令以配置代理
+
 ```json5
 {
   "enabled": false, // set to true to enable
-  "type": "HTTP", // or DIRECT, SOCKS
+  "type": "HTTP", // or SOCKS
   "host": "127.0.0.1", // either IP or host name
   "port": 7897 // [0,65536)
 }
@@ -77,8 +78,8 @@ along with this program. If not, see <http://www.gnu.org/licenses/>
 
 以下 Minecraft 版本已不在支持范围内。 除非出现了严重的漏洞，否则这些 Minecraft 版本将不再获得支持
 
-| Minecraft 版本 | **最后的版本**                                                                         | **发布日期**       |
-|--------------|-----------------------------------------------------------------------------------|----------------|
+| Minecraft 版本 | **最后的版本** | **发布日期** |
+|--------------|-----------|----------|
 
 ### 计划支持的版本
 

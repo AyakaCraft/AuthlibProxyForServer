@@ -113,6 +113,10 @@ loom {
     }
 }
 
+preprocess {
+    patternAnnotation.set("com.ayakacraft.authlibproxyforserver.utils.PreprocessPattern")
+}
+
 shadowJar {
     configurations = [project.configurations.shadow]
     exclude("META-INF")
