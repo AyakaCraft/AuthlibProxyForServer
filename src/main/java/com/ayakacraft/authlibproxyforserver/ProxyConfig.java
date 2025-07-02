@@ -130,14 +130,14 @@ public class ProxyConfig {
         HTTP(Proxy.Type.HTTP),
 
         @SerializedName("SOCKS")
-        SOCKS(Proxy.Type.SOCKS),
-        ;
+        SOCKS(Proxy.Type.SOCKS);
 
         public final Proxy.Type real;
 
         ProxyType(Proxy.Type real) {
             this.real = real;
         }
+
     }
 
 }

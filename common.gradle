@@ -258,7 +258,7 @@ publisher {
     setCurseID("1282523")
     setModrinthID("L7XPJc1F")
 
-    setVersionType("release")
+    setVersionType(project.mod_version_type)
     setChangelog(rootProject.file("changelog.md"))
 
     setProjectVersion(fullProjectVersion)
@@ -290,17 +290,17 @@ publishing {
     }
 
     // select the repositories you want to publish to
-    // repositories {
-    //     maven {
-    //         name = "AyakaCraft"
-    //         url = "https://mc.ayakacraft.com:7000/releases"
-    //         credentials(PasswordCredentials) {
-    //             username = "Publisher"
-    //             password = System.getenv("AYAKA_MAVEN_TOKEN")
-    //         }
-    //         authentication {
-    //             basic(BasicAuthentication)
-    //         }
-    //     }
-    // }
+    repositories {
+        maven {
+            name = "AyakaCraft"
+            url = "https://mc.ayakacraft.com:7000/releases"
+            credentials(PasswordCredentials) {
+                username = "Publisher"
+                password = System.getenv("AYAKA_MAVEN_TOKEN")
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
 }
