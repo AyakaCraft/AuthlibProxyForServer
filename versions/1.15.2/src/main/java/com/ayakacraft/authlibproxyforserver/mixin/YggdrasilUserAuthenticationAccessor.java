@@ -18,15 +18,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.ayakacraft.authlibproxyforserver.utils;
+package com.ayakacraft.authlibproxyforserver.mixin;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import com.mojang.authlib.yggdrasil.YggdrasilUserAuthentication;
+import me.fallenbreath.conditionalmixin.api.annotation.Condition;
+import me.fallenbreath.conditionalmixin.api.annotation.Restriction;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Retention(RetentionPolicy.SOURCE)
-@Target(ElementType.METHOD)
-public @interface PreprocessPattern {
+@Restriction(require = @Condition(value = "minecraft", versionPredicates = "<1.16"))
+@Mixin(value = YggdrasilUserAuthentication.class, remap = false)
+public interface YggdrasilUserAuthenticationAccessor {
+
+    @Accessor("BASE_URL")
+    static String getBaseUrl() {
+        throw new AssertionError();
+    }
 
 }

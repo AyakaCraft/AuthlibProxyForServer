@@ -20,8 +20,6 @@
 
 package com.ayakacraft.authlibproxyforserver;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
@@ -126,10 +124,8 @@ public class ProxyConfig {
 
     public enum ProxyType {
 
-        @SerializedName("HTTP")
         HTTP(Proxy.Type.HTTP),
 
-        @SerializedName("SOCKS")
         SOCKS(Proxy.Type.SOCKS);
 
         public final Proxy.Type real;

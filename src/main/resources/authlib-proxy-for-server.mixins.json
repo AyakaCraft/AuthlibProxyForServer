@@ -5,11 +5,16 @@
   "compatibilityLevel": "${COMPATIBILITY_LEVEL}",
   "mixins": [
     "CommandManagerMixin",
-    "ServerMainMixin"
+    "ServerMainMixin",
+    "YggdrasilAuthenticationServiceAccessor",
+    "YggdrasilGameProfileRepositoryAccessor",
+    "YggdrasilMinecraftSessionServiceAccessor",
+    "YggdrasilUserAuthenticationAccessor"
   ],
   "client": [
   ],
   "injectors": {
     "defaultRequire": 1
-  }
+  },
+  "plugin": "com.ayakacraft.authlibproxyforserver.utils.mixin.AuthProxyMixinPlugin"
 }

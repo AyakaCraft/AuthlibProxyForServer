@@ -22,15 +22,22 @@ package com.ayakacraft.authlibproxyforserver.commands;
 
 import com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer;
 import com.ayakacraft.authlibproxyforserver.ProxyConfig;
-import com.ayakacraft.authlibproxyforserver.utils.PreprocessPattern;
+import com.ayakacraft.authlibproxyforserver.mixin.YggdrasilAuthenticationServiceAccessor;
+import com.ayakacraft.authlibproxyforserver.utils.NetworkUtils;
+import com.ayakacraft.authlibproxyforserver.utils.preprocess.PreprocessPattern;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Pair;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.LinkedList;
+import java.util.List;
 
 import static com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer.LOGGER;
 import static com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer.config;
@@ -39,6 +46,8 @@ import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public final class AuthProxyCommand {
+
+    private static final int TCPING_TIMES = 5;
 
     private static int display(CommandContext<ServerCommandSource> context) {
         sendFeedback(
@@ -153,6 +162,27 @@ public final class AuthProxyCommand {
         return 1;
     }
 
+    private static int ping(CommandContext<ServerCommandSource> context) {
+        List<String> hosts = new LinkedList<>();
+        //#if MC>=12006
+        com.mojang.authlib.Environment env = YggdrasilAuthenticationServiceAccessor.determineEnvironment();
+        hosts.add(env.sessionHost());
+        hosts.add(env.servicesHost());
+        //#elseif MC>=11600
+        //$$ com.mojang.authlib.Environment env = YggdrasilAuthenticationServiceAccessor.determineEnvironment();
+        //$$ hosts.add(env.getAuthHost());
+        //$$ hosts.add(env.getAccountsHost());
+        //$$ hosts.add(env.getSessionHost());
+        //$$ hosts.add(env.getServicesHost());
+        //#else
+        //$$ hosts.add(com.ayakacraft.authlibproxyforserver.mixin.YggdrasilGameProfileRepositoryAccessor.getBaseUrl());
+        //$$ hosts.add(com.ayakacraft.authlibproxyforserver.mixin.YggdrasilMinecraftSessionServiceAccessor.getBaseUrl());
+        //$$ hosts.add(com.ayakacraft.authlibproxyforserver.mixin.YggdrasilUserAuthenticationAccessor.getBaseUrl());
+        //#endif
+        new TcpingThread(hosts, context.getSource()).start();
+        return 1;
+    }
+
     /**
      * @return true if failed
      */
@@ -211,7 +241,76 @@ public final class AuthProxyCommand {
                                 .then(literal("http").executes(it -> AuthProxyCommand.type(it, "HTTP")))
                                 .then(literal("socks").executes(it -> AuthProxyCommand.type(it, "SOCKS")))
                         )
+                        .then(literal("ping").executes(AuthProxyCommand::ping))
         );
+    }
+
+    private static class TcpingThread extends Thread {
+
+        private static Text packetLossStatusText(int packetsReceived) {
+            double     packetLoss = 1d - (double) packetsReceived / AuthProxyCommand.TCPING_TIMES;
+            Formatting colour;
+            if (packetLoss >= 0.8d) {
+                colour = Formatting.RED;
+            } else if (packetLoss >= 0.3d) {
+                colour = Formatting.YELLOW;
+            } else {
+                colour = Formatting.GREEN;
+            }
+            return Text.literal(String.format("%d packets transmitted, %d packets received, ", TCPING_TIMES, packetsReceived))
+                    .append(Text.literal(String.format("%.1f%%", packetLoss * 100)).formatted(colour))
+                    .append(Text.literal(" packet loss"));
+        }
+
+        private static Text averagePingText(long ping) {
+            Formatting colour;
+            if (ping >= 800) {
+                colour = Formatting.RED;
+            } else if (ping >= 400) {
+                colour = Formatting.YELLOW;
+            } else {
+                colour = Formatting.GREEN;
+            }
+            return Text.literal("Average ping: ")
+                    .append(Text.literal(ping + "ms").formatted(colour));
+        }
+
+        private final List<String> hosts;
+
+        private final ServerCommandSource source;
+
+        public TcpingThread(List<String> hosts, ServerCommandSource source) {
+            this.hosts = hosts;
+            this.source = source;
+        }
+
+        private void tcping(String host) {
+            Pair<Long, Integer> res = NetworkUtils.tcpingMultiple(URI.create(host), proxy, TCPING_TIMES);
+            sendFeedback(
+                    source,
+                    Text.literal(String.format("Ping for '%s':", host)),
+                    false
+            );
+            sendFeedback(
+                    source,
+                    packetLossStatusText(res.getRight()),
+                    false
+            );
+            if (res.getRight() > 0) {
+                sendFeedback(
+                        source,
+                        averagePingText(res.getLeft() / TCPING_TIMES),
+                        false
+                );
+            }
+        }
+
+        public void run() {
+            sendFeedback(source, Text.literal("Ping started"), false);
+            hosts.forEach(this::tcping);
+            sendFeedback(source, Text.literal("Ping finished"), false);
+        }
+
     }
 
 }
