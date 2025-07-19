@@ -299,7 +299,7 @@ public final class AuthProxyCommand {
             if (res.getRight() > 0) {
                 sendFeedback(
                         source,
-                        averagePingText(res.getLeft() / TCPING_TIMES),
+                        averagePingText(res.getLeft() / res.getRight()),
                         false
                 );
             }

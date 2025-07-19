@@ -29,6 +29,8 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/versions/1.21.6/AuthlibProxyForServer.1.21.6.test.iml" filepath="$PROJECT_DIR$/.idea/modules/versions/1.21.6/AuthlibProxyForServer.1.21.6.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/versions/1.21.7/AuthlibProxyForServer.1.21.7.main.iml" filepath="$PROJECT_DIR$/.idea/modules/versions/1.21.7/AuthlibProxyForServer.1.21.7.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/versions/1.21.7/AuthlibProxyForServer.1.21.7.test.iml" filepath="$PROJECT_DIR$/.idea/modules/versions/1.21.7/AuthlibProxyForServer.1.21.7.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/versions/1.21.8/AuthlibProxyForServer.1.21.8.main.iml" filepath="$PROJECT_DIR$/.idea/modules/versions/1.21.8/AuthlibProxyForServer.1.21.8.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/versions/1.21.8/AuthlibProxyForServer.1.21.8.test.iml" filepath="$PROJECT_DIR$/.idea/modules/versions/1.21.8/AuthlibProxyForServer.1.21.8.test.iml" />
     </modules>
   </component>
 </project>
