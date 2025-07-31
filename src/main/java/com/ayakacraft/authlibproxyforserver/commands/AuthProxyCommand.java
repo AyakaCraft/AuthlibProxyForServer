@@ -22,9 +22,10 @@ package com.ayakacraft.authlibproxyforserver.commands;
 
 import com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer;
 import com.ayakacraft.authlibproxyforserver.ProxyConfig;
-import com.ayakacraft.authlibproxyforserver.mixin.YggdrasilAuthenticationServiceAccessor;
 import com.ayakacraft.authlibproxyforserver.utils.NetworkUtils;
 import com.ayakacraft.authlibproxyforserver.utils.preprocess.PreprocessPattern;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -36,8 +37,8 @@ import net.minecraft.util.Pair;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer.LOGGER;
 import static com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer.config;
@@ -163,13 +164,13 @@ public final class AuthProxyCommand {
     }
 
     private static int ping(CommandContext<ServerCommandSource> context) {
-        List<String> hosts = new LinkedList<>();
+        Set<String> hosts = Sets.newHashSet();
         //#if MC>=12006
-        com.mojang.authlib.Environment env = YggdrasilAuthenticationServiceAccessor.determineEnvironment();
+        com.mojang.authlib.Environment env = com.ayakacraft.authlibproxyforserver.mixin.YggdrasilAuthenticationServiceAccessor.determineEnvironment();
         hosts.add(env.sessionHost());
         hosts.add(env.servicesHost());
         //#elseif MC>=11600
-        //$$ com.mojang.authlib.Environment env = YggdrasilAuthenticationServiceAccessor.determineEnvironment();
+        //$$ com.mojang.authlib.Environment env = com.ayakacraft.authlibproxyforserver.mixin.YggdrasilAuthenticationServiceAccessor.determineEnvironment();
         //$$ hosts.add(env.getAuthHost());
         //$$ hosts.add(env.getAccountsHost());
         //$$ hosts.add(env.getSessionHost());
@@ -248,11 +249,11 @@ public final class AuthProxyCommand {
     private static class TcpingThread extends Thread {
 
         private static Text packetLossStatusText(int packetsReceived) {
-            double     packetLoss = 1d - (double) packetsReceived / AuthProxyCommand.TCPING_TIMES;
+            double     packetLoss = 1D - (double) packetsReceived / AuthProxyCommand.TCPING_TIMES;
             Formatting colour;
-            if (packetLoss >= 0.8d) {
+            if (packetLoss > 0.8D) {
                 colour = Formatting.RED;
-            } else if (packetLoss >= 0.3d) {
+            } else if (packetLoss > 0.2D) {
                 colour = Formatting.YELLOW;
             } else {
                 colour = Formatting.GREEN;
@@ -264,9 +265,11 @@ public final class AuthProxyCommand {
 
         private static Text averagePingText(long ping) {
             Formatting colour;
-            if (ping >= 800) {
+            if (ping > 1000) {
+                colour = Formatting.LIGHT_PURPLE;
+            } else if (ping >= 800) {
                 colour = Formatting.RED;
-            } else if (ping >= 400) {
+            } else if (ping >= 300) {
                 colour = Formatting.YELLOW;
             } else {
                 colour = Formatting.GREEN;
@@ -275,40 +278,56 @@ public final class AuthProxyCommand {
                     .append(Text.literal(ping + "ms").formatted(colour));
         }
 
-        private final List<String> hosts;
+        private final Set<String> hosts;
 
         private final ServerCommandSource source;
 
-        public TcpingThread(List<String> hosts, ServerCommandSource source) {
+        private final Map<String, Pair<Long, Integer>> results;
+
+        private long startTimeMillis;
+
+        public TcpingThread(Set<String> hosts, ServerCommandSource source) {
+            super("TCPing Thread");
             this.hosts = hosts;
             this.source = source;
+            this.results = Maps.newHashMap();
         }
 
-        private void tcping(String host) {
-            Pair<Long, Integer> res = NetworkUtils.tcpingMultiple(URI.create(host), proxy, TCPING_TIMES);
+        private synchronized void saveResult(String host, Pair<Long, Integer> res) {
+            results.put(host, res);
+            if (results.size() >= hosts.size()) {
+                results.forEach(this::sendResult);
+                sendFeedback(source, Text.literal("Ping finished after " + (System.currentTimeMillis() - startTimeMillis) + "ms"), false);
+            }
+        }
+
+        private void sendResult(String h, Pair<Long, Integer> r) {
             sendFeedback(
                     source,
-                    Text.literal(String.format("Ping for '%s':", host)),
+                    Text.literal(String.format("Ping for '%s':", h)),
                     false
             );
             sendFeedback(
                     source,
-                    packetLossStatusText(res.getRight()),
+                    packetLossStatusText(r.getRight()),
                     false
             );
-            if (res.getRight() > 0) {
+            if (r.getRight() > 0) {
                 sendFeedback(
                         source,
-                        averagePingText(res.getLeft() / res.getRight()),
+                        averagePingText(r.getLeft() / r.getRight()),
                         false
                 );
             }
         }
 
+        @Override
         public void run() {
             sendFeedback(source, Text.literal("Ping started"), false);
-            hosts.forEach(this::tcping);
-            sendFeedback(source, Text.literal("Ping finished"), false);
+            startTimeMillis = System.currentTimeMillis();
+            hosts.forEach(host -> new Thread(() ->
+                    saveResult(host, NetworkUtils.tcpingMultiple(URI.create(host), proxy, TCPING_TIMES))).start()
+            );
         }
 
     }

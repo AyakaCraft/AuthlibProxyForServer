@@ -44,10 +44,10 @@ public final class NetworkUtils {
 
     public static Pair<Long, Integer> tcpingMultiple(URI uri, Proxy proxy, int times) {
         if (times <= 0) {
-            throw new IllegalArgumentException("Not positive as expected: " + times);
+            throw new IllegalArgumentException("TCPing times not positive as expected: " + times);
         }
         long sum = 0L;
-        int i = 0;
+        int  i   = 0;
         for (int j = 0; j < times; j++) {
             long l = tcping(uri, proxy);
             if (l >= 0) {
