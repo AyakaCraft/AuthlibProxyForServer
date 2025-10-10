@@ -65,14 +65,14 @@ Currently, the following Minecraft versions are actively supported with new feat
 |-------------------|---------------------------------------------|
 | 1.14.4            | ✔️ Long Term Support                        |
 | 1.15.2            | ✔️ Long Term Support                        |
-| 1.16.5            | ✔️ Long Term Support                        |
+| 1.16.4-5          | ✔️ Long Term Support                        |
 | 1.17.1            | ✔️ Long Term Support                        |
 | 1.18.2            | ✔️ Long Term Support                        |
 | 1.19.4            | ✔️ Long Term Support                        |
-| 1.20.1            | ✔️ Long Term Support                        |
-| 1.20.6            | ✔️ Long Term Support                        |
-| 1.21.1, 1.21.4-7  | 🕒 When Minecraft 1.23 snapshot is released |
-| 1.21.8            | 🕒 To be determined                         |
+| 1.20-1.20.1       | ✔️ Long Term Support                        |
+| 1.20.5-6          | ✔️ Long Term Support                        |
+| 1.21-1.21.8       | 🕒 When Minecraft 1.23 snapshot is released |
+| 1.21.9-10         | 🕒 To be determined                         |
 
 ### End-of-life versions
 

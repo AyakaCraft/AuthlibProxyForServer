@@ -35,7 +35,7 @@ import java.nio.file.Paths;
 
 public final class AuthlibProxyForServer {
 
-    private static final Path configPath = Paths.get("config/authlib.proxy.json");
+    private static final Path configPath = Paths.get("./config/authlib.proxy.json").toAbsolutePath();
 
     public static final Logger LOGGER = LogManager.getLogger("AuthlibProxyForServer");
 
@@ -71,6 +71,10 @@ public final class AuthlibProxyForServer {
     }
 
     public static void writeString(Path path, String str) throws IOException {
+        if (Files.notExists(path)) {
+            path.getParent().toFile().mkdirs();
+            Files.createFile(path);
+        }
         Files.write(path, str.getBytes(StandardCharsets.UTF_8));
     }
 
