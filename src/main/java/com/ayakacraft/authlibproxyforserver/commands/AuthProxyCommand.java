@@ -30,10 +30,10 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import net.minecraft.server.command.ServerCommandSource;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Pair;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.ChatFormatting;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 
 import java.io.IOException;
 import java.net.URI;
@@ -43,14 +43,14 @@ import java.util.Set;
 import static com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer.LOGGER;
 import static com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer.config;
 import static com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer.proxy;
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
+import static net.minecraft.commands.Commands.argument;
+import static net.minecraft.commands.Commands.literal;
 
 public final class AuthProxyCommand {
 
     private static final int TCPING_TIMES = 5;
 
-    private static int display(CommandContext<ServerCommandSource> context) {
+    private static int display(CommandContext<CommandSourceStack> context) {
         sendFeedback(
                 context.getSource(),
                 proxyText(),
@@ -60,12 +60,12 @@ public final class AuthProxyCommand {
         return 1;
     }
 
-    private static int enable(CommandContext<ServerCommandSource> context) {
-        ServerCommandSource source = context.getSource();
+    private static int enable(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
         if (config.enabled) {
             sendFeedback(
                     source,
-                    Text.literal("Proxy already enabled"),
+                    Component.literal("Proxy already enabled"),
                     false
             );
             return 1;
@@ -76,18 +76,18 @@ public final class AuthProxyCommand {
         }
         sendFeedback(
                 source,
-                Text.literal("Proxy enabled, restart the server to apply"),
+                Component.literal("Proxy enabled, restart the server to apply"),
                 true
         );
         return 1;
     }
 
-    private static int disable(CommandContext<ServerCommandSource> context) {
-        ServerCommandSource source = context.getSource();
+    private static int disable(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
         if (!config.enabled) {
             sendFeedback(
                     source,
-                    Text.literal("Proxy already disabled"),
+                    Component.literal("Proxy already disabled"),
                     false
             );
             return 1;
@@ -98,22 +98,22 @@ public final class AuthProxyCommand {
         }
         sendFeedback(
                 source,
-                Text.literal("Proxy disabled, restart the server to apply"),
+                Component.literal("Proxy disabled, restart the server to apply"),
                 true
         );
         return 1;
     }
 
-    private static int port(CommandContext<ServerCommandSource> context) {
-        ServerCommandSource source = context.getSource();
-        int                 port   = IntegerArgumentType.getInteger(context, "port");
+    private static int port(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        int                port   = IntegerArgumentType.getInteger(context, "port");
         config.port = (short) port;
         if (saveConfig(source)) {
             return 0;
         }
         sendFeedback(
                 source,
-                Text.literal("Proxy port set to " + port),
+                Component.literal("Proxy port set to " + port),
                 true
         );
         sendFeedback(
@@ -124,16 +124,16 @@ public final class AuthProxyCommand {
         return 1;
     }
 
-    private static int host(CommandContext<ServerCommandSource> context) {
-        ServerCommandSource source = context.getSource();
-        String              host   = StringArgumentType.getString(context, "host");
+    private static int host(CommandContext<CommandSourceStack> context) {
+        CommandSourceStack source = context.getSource();
+        String             host   = StringArgumentType.getString(context, "host");
         config.host = host;
         if (saveConfig(source)) {
             return 0;
         }
         sendFeedback(
                 source,
-                Text.literal("Proxy host set to " + host),
+                Component.literal("Proxy host set to " + host),
                 true
         );
         sendFeedback(
@@ -144,15 +144,15 @@ public final class AuthProxyCommand {
         return 1;
     }
 
-    private static int type(CommandContext<ServerCommandSource> context, String type) {
-        ServerCommandSource source = context.getSource();
+    private static int type(CommandContext<CommandSourceStack> context, String type) {
+        CommandSourceStack source = context.getSource();
         config.type = ProxyConfig.ProxyType.valueOf(type);
         if (saveConfig(source)) {
             return 0;
         }
         sendFeedback(
                 source,
-                Text.literal("Proxy type set to " + type),
+                Component.literal("Proxy type set to " + type),
                 true
         );
         sendFeedback(
@@ -163,7 +163,7 @@ public final class AuthProxyCommand {
         return 1;
     }
 
-    private static int ping(CommandContext<ServerCommandSource> context) {
+    private static int ping(CommandContext<CommandSourceStack> context) {
         Set<String> hosts = Sets.newHashSet();
         //#if MC>=12006
         com.mojang.authlib.Environment env = com.ayakacraft.authlibproxyforserver.mixin.YggdrasilAuthenticationServiceAccessor.determineEnvironment();
@@ -187,46 +187,46 @@ public final class AuthProxyCommand {
     /**
      * @return true if failed
      */
-    private static boolean saveConfig(ServerCommandSource source) {
+    private static boolean saveConfig(CommandSourceStack source) {
         try {
             AuthlibProxyForServer.saveConfig(config.validate());
         } catch (IOException e) {
-            source.sendError(Text.literal("Error saving config"));
+            source.sendFailure(Component.literal("Error saving config"));
             LOGGER.error("Error saving config", e);
             return true;
         } catch (ProxyConfig.InvalidProxyConfigException e) {
-            source.sendError(Text.literal(e.getMessage()));
+            source.sendFailure(Component.literal(e.getMessage()));
             LOGGER.error(e);
             return true;
         }
         return false;
     }
 
-    private static Text proxyText() {
-        return Text.literal("Proxy for authlib: " + proxy.toString());
-    }
-
     @PreprocessPattern
-    private static Text li(String str) {
+    private static Component li(String str) {
         //#if MC>=11900
-        return Text.literal(str);
+        return Component.literal(str);
         //#else
-        //$$ return new net.minecraft.text.LiteralText(str);
+        //$$ return new net.minecraft.network.chat.TextComponent(str);
         //#endif
     }
 
-    private static void sendFeedback(ServerCommandSource source, Text txt, boolean broadcastToOps) {
+    private static Component proxyText() {
+        return Component.literal("Proxy for authlib: " + proxy.toString());
+    }
+
+    private static void sendFeedback(CommandSourceStack source, Component txt, boolean broadcastToOps) {
         //#if MC>=12000
-        source.sendFeedback(() -> txt, broadcastToOps);
+        source.sendSuccess(() -> txt, broadcastToOps);
         //#else
-        //$$ source.sendFeedback(txt, broadcastToOps);
+        //$$ source.sendSuccess(txt, broadcastToOps);
         //#endif
     }
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+    public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 literal("authproxy")
-                        .requires(source -> source.hasPermissionLevel(source.getServer().getOpPermissionLevel()))
+                        .requires(source -> source.hasPermission(source.getServer().getOperatorUserPermissionLevel()))
                         .executes(AuthProxyCommand::display)
                         .then(literal("enable").executes(AuthProxyCommand::enable))
                         .then(literal("disable").executes(AuthProxyCommand::disable))
@@ -248,45 +248,45 @@ public final class AuthProxyCommand {
 
     private static class TcpingThread extends Thread {
 
-        private static Text packetLossStatusText(int packetsReceived) {
-            double     packetLoss = 1D - (double) packetsReceived / AuthProxyCommand.TCPING_TIMES;
-            Formatting colour;
+        private static Component packetLossStatusText(int packetsReceived) {
+            double         packetLoss = 1D - (double) packetsReceived / AuthProxyCommand.TCPING_TIMES;
+            ChatFormatting colour;
             if (packetLoss > 0.8D) {
-                colour = Formatting.RED;
+                colour = ChatFormatting.RED;
             } else if (packetLoss > 0.2D) {
-                colour = Formatting.YELLOW;
+                colour = ChatFormatting.YELLOW;
             } else {
-                colour = Formatting.GREEN;
+                colour = ChatFormatting.GREEN;
             }
-            return Text.literal(String.format("%d packets transmitted, %d packets received, ", TCPING_TIMES, packetsReceived))
-                    .append(Text.literal(String.format("%.1f%%", packetLoss * 100)).formatted(colour))
-                    .append(Text.literal(" packet loss"));
+            return Component.literal(String.format("%d packets transmitted, %d packets received, ", TCPING_TIMES, packetsReceived))
+                    .append(Component.literal(String.format("%.1f%%", packetLoss * 100)).withStyle(colour))
+                    .append(Component.literal(" packet loss"));
         }
 
-        private static Text averagePingText(long ping) {
-            Formatting colour;
+        private static Component averagePingText(long ping) {
+            ChatFormatting colour;
             if (ping > 1000) {
-                colour = Formatting.LIGHT_PURPLE;
+                colour = ChatFormatting.LIGHT_PURPLE;
             } else if (ping >= 800) {
-                colour = Formatting.RED;
+                colour = ChatFormatting.RED;
             } else if (ping >= 300) {
-                colour = Formatting.YELLOW;
+                colour = ChatFormatting.YELLOW;
             } else {
-                colour = Formatting.GREEN;
+                colour = ChatFormatting.GREEN;
             }
-            return Text.literal("Average ping: ")
-                    .append(Text.literal(ping + "ms").formatted(colour));
+            return Component.literal("Average ping: ")
+                    .append(Component.literal(ping + "ms").withStyle(colour));
         }
 
         private final Set<String> hosts;
 
-        private final ServerCommandSource source;
+        private final CommandSourceStack source;
 
         private final Map<String, Pair<Long, Integer>> results;
 
         private long startTimeMillis;
 
-        public TcpingThread(Set<String> hosts, ServerCommandSource source) {
+        public TcpingThread(Set<String> hosts, CommandSourceStack source) {
             super("TCPing Thread");
             this.hosts = hosts;
             this.source = source;
@@ -297,25 +297,25 @@ public final class AuthProxyCommand {
             results.put(host, res);
             if (results.size() >= hosts.size()) {
                 results.forEach(this::sendResult);
-                sendFeedback(source, Text.literal("Ping finished after " + (System.currentTimeMillis() - startTimeMillis) + "ms"), false);
+                sendFeedback(source, Component.literal("Ping finished after " + (System.currentTimeMillis() - startTimeMillis) + "ms"), false);
             }
         }
 
         private void sendResult(String h, Pair<Long, Integer> r) {
             sendFeedback(
                     source,
-                    Text.literal(String.format("Ping for '%s':", h)),
+                    Component.literal(String.format("Ping for '%s':", h)),
                     false
             );
             sendFeedback(
                     source,
-                    packetLossStatusText(r.getRight()),
+                    packetLossStatusText(r.getSecond()),
                     false
             );
-            if (r.getRight() > 0) {
+            if (r.getSecond() > 0) {
                 sendFeedback(
                         source,
-                        averagePingText(r.getLeft() / r.getRight()),
+                        averagePingText(r.getFirst() / r.getSecond()),
                         false
                 );
             }
@@ -323,7 +323,7 @@ public final class AuthProxyCommand {
 
         @Override
         public void run() {
-            sendFeedback(source, Text.literal("Ping started"), false);
+            sendFeedback(source, Component.literal("Ping started"), false);
             startTimeMillis = System.currentTimeMillis();
             hosts.forEach(host -> new Thread(() ->
                     saveResult(host, NetworkUtils.tcpingMultiple(URI.create(host), proxy, TCPING_TIMES))).start()

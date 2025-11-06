@@ -22,8 +22,8 @@ package com.ayakacraft.authlibproxyforserver.mixin;
 
 import com.ayakacraft.authlibproxyforserver.commands.AuthProxyCommand;
 import com.mojang.brigadier.CommandDispatcher;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,19 +31,19 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(CommandManager.class)
-public class CommandManagerMixin {
+@Mixin(Commands.class)
+public class CommandsMixin {
 
     @Shadow
     @Final
-    private CommandDispatcher<ServerCommandSource> dispatcher;
+    private CommandDispatcher<CommandSourceStack> dispatcher;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void onRegister(
             //#if MC>=11900
-            CommandManager.RegistrationEnvironment commandSelection, net.minecraft.command.CommandRegistryAccess commandBuildContext,
+            Commands.CommandSelection commandSelection, net.minecraft.commands.CommandBuildContext commandBuildContext,
             //#elseif MC>=11600
-            //$$ CommandManager.RegistrationEnvironment commandSelection,
+            //$$ Commands.CommandSelection commandSelection,
             //#else
             //$$ boolean isDedicated,
             //#endif
@@ -51,7 +51,7 @@ public class CommandManagerMixin {
     ) {
         if (
             //#if MC>=11600
-                commandSelection == CommandManager.RegistrationEnvironment.DEDICATED
+                commandSelection == Commands.CommandSelection.DEDICATED
             //#else
             //$$ isDedicated
             //#endif

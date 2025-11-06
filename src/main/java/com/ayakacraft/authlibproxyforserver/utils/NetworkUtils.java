@@ -20,7 +20,7 @@
 
 package com.ayakacraft.authlibproxyforserver.utils;
 
-import net.minecraft.util.Pair;
+import com.mojang.datafixers.util.Pair;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;

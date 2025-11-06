@@ -4,7 +4,7 @@
   "package": "com.ayakacraft.authlibproxyforserver.mixin",
   "compatibilityLevel": "${COMPATIBILITY_LEVEL}",
   "mixins": [
-    "CommandManagerMixin",
+    "CommandsMixin",
     "ServerMainMixin",
     "YggdrasilAuthenticationServiceAccessor",
     "YggdrasilGameProfileRepositoryAccessor",
