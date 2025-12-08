@@ -10,7 +10,7 @@ plugins {
     id("com.replaymod.preprocess") version ("d452ef7612")
 
     // https://github.com/GradleUp/shadow
-    id("com.gradleup.shadow") version ("9.2.2")
+    id("com.gradleup.shadow") version ("9.3.0")
 
     // https://github.com/hierynomus/license-gradle-plugin
     id("com.github.hierynomus.license") version ("0.16.1")
@@ -18,7 +18,7 @@ plugins {
     // https://github.com/firstdarkdev/modpublisher
     id("com.hypherionmc.modutils.modpublisher") version ("2.1.8")
 
-    id("maven-publish")
+    `maven-publish`
     idea
 }
 
