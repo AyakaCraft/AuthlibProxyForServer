@@ -1,1 +1,1 @@
-- Support for Minecraft 1.21.11
+- Fix missing ping target for 1.21.9+

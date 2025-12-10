@@ -182,7 +182,12 @@ public final class AuthProxyCommand {
 
     private static int ping(CommandContext<CommandSourceStack> context) {
         Set<String> hosts = Sets.newHashSet();
-        //#if MC>=12006
+        //#if MC>=12109
+        //$$ com.mojang.authlib.Environment env = com.ayakacraft.authlibproxyforserver.mixin.YggdrasilAuthenticationServiceAccessor.determineEnvironment();
+        //$$ hosts.add(env.sessionHost());
+        //$$ hosts.add(env.servicesHost());
+        //$$ hosts.add(env.profilesHost());
+        //#elseif MC>=12006
         com.mojang.authlib.Environment env = com.ayakacraft.authlibproxyforserver.mixin.YggdrasilAuthenticationServiceAccessor.determineEnvironment();
         hosts.add(env.sessionHost());
         hosts.add(env.servicesHost());

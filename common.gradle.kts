@@ -296,17 +296,17 @@ publisher {
     // debug = true
 
     if (properties["curseforge_id"] != null) {
-        curseID.set(properties["curseforge_id"].toString())
+        curseID = properties["curseforge_id"].toString()
     }
     if (properties["modrinth_id"] != null) {
-        modrinthID.set(properties["modrinth_id"].toString())
+        modrinthID = properties["modrinth_id"].toString()
     }
 
-    versionType.set(properties["mod_version_type"].toString()) // "alpha", "beta", "release"
-    changelog.set(rootProject.file("changelog.md"))
+    versionType = properties["mod_version_type"].toString() // "alpha", "beta", "release"
+    changelog = rootProject.file("changelog.md")
 
-    projectVersion.set(fullProjectVersion)
-    gameVersions.set(minecraftVersions)
+    projectVersion = fullProjectVersion
+    gameVersions = minecraftVersions
     setLoaders("fabric")
     setCurseEnvironment("server")
 
