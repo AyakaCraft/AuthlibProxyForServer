@@ -306,7 +306,7 @@ publisher {
     changelog.set(rootProject.file("changelog.md"))
 
     projectVersion.set(fullProjectVersion)
-    this.gameVersions.set(gameVersions)
+    gameVersions.set(minecraftVersions)
     setLoaders("fabric")
     setCurseEnvironment("server")
 
