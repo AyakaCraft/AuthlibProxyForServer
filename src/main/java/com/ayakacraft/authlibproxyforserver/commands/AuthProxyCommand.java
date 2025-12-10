@@ -50,6 +50,23 @@ public final class AuthProxyCommand {
 
     private static final int TCPING_TIMES = 5;
 
+    @PreprocessPattern
+    private static Component li(String str) {
+        //#if MC>=11900
+        return Component.literal(str);
+        //#else
+        //$$ return new net.minecraft.network.chat.TextComponent(str);
+        //#endif
+    }
+
+    private static boolean hasOpPermissionLevel(CommandSourceStack source) {
+        //#if MC>=12111
+        //$$ return source.permissions().hasPermission(new net.minecraft.server.permissions.Permission.HasCommandLevel(source.getServer().operatorUserPermissions().level()));
+        //#else
+        return source.hasPermission(source.getServer().getOperatorUserPermissionLevel());
+        //#endif
+    }
+
     private static int display(CommandContext<CommandSourceStack> context) {
         sendFeedback(
                 context.getSource(),
@@ -202,15 +219,6 @@ public final class AuthProxyCommand {
         return false;
     }
 
-    @PreprocessPattern
-    private static Component li(String str) {
-        //#if MC>=11900
-        return Component.literal(str);
-        //#else
-        //$$ return new net.minecraft.network.chat.TextComponent(str);
-        //#endif
-    }
-
     private static Component proxyText() {
         return Component.literal("Proxy for authlib: " + proxy.toString());
     }
@@ -226,7 +234,7 @@ public final class AuthProxyCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 literal("authproxy")
-                        .requires(source -> source.hasPermission(source.getServer().getOperatorUserPermissionLevel()))
+                        .requires(AuthProxyCommand::hasOpPermissionLevel)
                         .executes(AuthProxyCommand::display)
                         .then(literal("enable").executes(AuthProxyCommand::enable))
                         .then(literal("disable").executes(AuthProxyCommand::disable))

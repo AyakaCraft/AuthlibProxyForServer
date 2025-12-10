@@ -71,8 +71,8 @@ Currently, the following Minecraft versions are actively supported with new feat
 | 1.19.4            | ✔️ Long Term Support                        |
 | 1.20-1.20.1       | ✔️ Long Term Support                        |
 | 1.20.5-6          | ✔️ Long Term Support                        |
-| 1.21-1.21.8       | 🕒 When Minecraft 1.23 snapshot is released |
-| 1.21.9-10         | 🕒 To be determined                         |
+| 1.21-1.21.10      | 🕒 When Minecraft 27.1 snapshot is released |
+| 1.21.11           | 🕒 To be determined                         |
 
 ### End-of-life versions
 
