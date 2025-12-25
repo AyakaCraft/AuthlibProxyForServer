@@ -1,1 +1,2 @@
-- Fix missing ping target for 1.21.9+
+### General
+- Requires Fabric Loader 0.18.3+

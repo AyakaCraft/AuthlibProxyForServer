@@ -3,7 +3,7 @@ import nl.javadude.gradle.plugins.license.header.HeaderDefinitionBuilder
 import java.util.Calendar
 
 plugins {
-    id("net.fabricmc.fabric-loom") version ("1.14-SNAPSHOT")
+    id("net.fabricmc.fabric-loom-remap") version ("1.14-SNAPSHOT")
 
     // https://github.com/ReplayMod/preprocessor
     // https://github.com/Fallen-Breath/preprocessor
@@ -85,25 +85,26 @@ idea {
 
 // https://github.com/FabricMC/fabric-loader/issues/783
 configurations {
-    runtimeOnly { exclude(group = "net.fabricmc", module = "fabric-loader") }
+    modRuntimeOnly { exclude(group = "net.fabricmc", module = "fabric-loader") }
 }
 
 dependencies {
     // loom
     minecraft("com.mojang:minecraft:${minecraftVersion}")
+    mappings(loom.officialMojangMappings())
 
     // fabric
-    implementation("net.fabricmc:fabric-loader:${properties["loader_version"]}")
+    modImplementation("net.fabricmc:fabric-loader:${properties["loader_version"]}")
 
     //libs
-    include((implementation("me.fallenbreath:conditional-mixin-fabric:${properties["conditionalmixin_version"]}") as Dependency))
+    include((modImplementation("me.fallenbreath:conditional-mixin-fabric:${properties["conditionalmixin_version"]}") as Dependency))
 
     if (!ci) {
         if (mcVersionNumber >= 11600) {
             if (mcVersionNumber < 11900) {
-                runtimeOnly("maven.modrinth:lazydfu:0.1.2")
+                modRuntimeOnly("maven.modrinth:lazydfu:0.1.2")
             } else if (mcVersionNumber < 12100) {
-                runtimeOnly("maven.modrinth:lazydfu:0.1.3")
+                modRuntimeOnly("maven.modrinth:lazydfu:0.1.3")
             }
         }
     }
@@ -113,7 +114,15 @@ dependencies {
 }
 
 val mixinConfigPath = "authlib-proxy-for-server.mixins.json"
-val javaCompatibility = JavaVersion.VERSION_25
+val javaCompatibility = if (mcVersionNumber >= 12005) {
+    JavaVersion.VERSION_21
+} else if (mcVersionNumber >= 11800) {
+    JavaVersion.VERSION_17
+} else if (mcVersionNumber >= 11700) {
+    JavaVersion.VERSION_16
+} else {
+    JavaVersion.VERSION_1_8
+}
 val mixinCompatibility = javaCompatibility
 
 loom {
@@ -149,6 +158,12 @@ tasks.shadowJar {
 tasks.withType<ShadowJar> {
     enableAutoRelocation = true
     relocationPrefix = "authlibproxyforserver.libs"
+}
+
+tasks.remapJar {
+    dependsOn(tasks.shadowJar)
+    mustRunAfter(tasks.shadowJar)
+    inputFile.set(tasks.shadowJar.get().archiveFile)
 }
 
 val modVersion = properties["mod_version"].toString()
@@ -232,11 +247,6 @@ java {
 }
 
 tasks.jar {
-    dependsOn(tasks.shadowJar)
-    mustRunAfter(tasks.shadowJar)
-    from(zipTree(tasks.shadowJar.get().archiveFile))
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-
     inputs.property("archives_base_name", properties["archives_base_name"])
     from(rootProject.file("LICENSE")) {
         rename { "${it}_${properties["archives_base_name"]}" }
@@ -308,7 +318,7 @@ publisher {
     setLoaders("fabric")
     setCurseEnvironment("server")
 
-    artifact.set(tasks.jar)
+    artifact.set(tasks.remapJar)
 
     if (mcVersionNumber < 11700) {
         setJavaVersions(JavaVersion.VERSION_1_8)
