@@ -42,6 +42,9 @@ public class ServerMainMixin {
                     remap = false
             ),
             index = 0
+            //#if MC>=11700
+            , remap = false
+            //#endif
     )
     private static Proxy useDynamicProxy(Proxy proxy) {
         Proxy p = proxy;
