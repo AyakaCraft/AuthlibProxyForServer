@@ -3,7 +3,7 @@ import nl.javadude.gradle.plugins.license.header.HeaderDefinitionBuilder
 import java.util.Calendar
 
 plugins {
-    id("net.fabricmc.fabric-loom") version ("1.15.0-alpha.16")
+    id("net.fabricmc.fabric-loom") version ("1.15.0-alpha.22")
 
     // https://github.com/ReplayMod/preprocessor
     // https://github.com/Fallen-Breath/preprocessor
@@ -19,7 +19,6 @@ plugins {
     id("com.hypherionmc.modutils.modpublisher") version ("2.1.8")
 
     `maven-publish`
-    idea
 }
 
 val properties = project.properties
@@ -29,7 +28,6 @@ val minecraftVersion = properties["minecraft_version"].toString()
 
 val jitpack = System.getenv("JITPACK") == "true"
 val releasing = System.getenv("BUILD_RELEASE") == "true"
-val ci = jitpack || releasing
 
 repositories {
     mavenCentral()
@@ -41,51 +39,12 @@ repositories {
         }
     }
     maven {
-        name = "masa"
-        url = uri("https://masa.dy.fi/maven")
-    }
-    maven {
         name = "Fallen"
         url = uri("https://maven.fallenbreath.me/releases")  // Fallen orz
         content {
             includeGroup("me.fallenbreath")
         }
     }
-    maven {
-        name = "Modrinth"
-        url = uri("https://api.modrinth.com/maven")
-        content {
-            includeGroup("maven.modrinth")
-        }
-    }
-    maven {
-        name = "CurseMaven"
-        url = uri("https://cursemaven.com")
-        content {
-            includeGroup("curse.maven")
-        }
-    }
-    maven {
-        name = "Jitpack"
-        url = uri("https://jitpack.io")
-    }
-    maven {
-        url = uri("https://maven.fallenbreath.me/jitpack")
-    }
-}
-
-idea {
-    module {
-        if (!ci) {
-            isDownloadSources = true
-            isDownloadJavadoc = true
-        }
-    }
-}
-
-// https://github.com/FabricMC/fabric-loader/issues/783
-configurations {
-    runtimeOnly { exclude(group = "net.fabricmc", module = "fabric-loader") }
 }
 
 dependencies {
@@ -97,16 +56,6 @@ dependencies {
 
     //libs
     include((implementation("me.fallenbreath:conditional-mixin-fabric:${properties["conditionalmixin_version"]}") as Dependency))
-
-    if (!ci) {
-        if (mcVersionNumber >= 11600) {
-            if (mcVersionNumber < 11900) {
-                runtimeOnly("maven.modrinth:lazydfu:0.1.2")
-            } else if (mcVersionNumber < 12100) {
-                runtimeOnly("maven.modrinth:lazydfu:0.1.3")
-            }
-        }
-    }
 
     testImplementation("net.fabricmc:fabric-loader-junit:${properties["loader_version"]}")
 
