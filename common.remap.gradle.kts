@@ -3,20 +3,20 @@ import nl.javadude.gradle.plugins.license.header.HeaderDefinitionBuilder
 import java.util.Calendar
 
 plugins {
-    id("net.fabricmc.fabric-loom-remap") version ("1.15.0-alpha.22")
+    id("net.fabricmc.fabric-loom-remap") version ("1.15-SNAPSHOT")
 
     // https://github.com/ReplayMod/preprocessor
     // https://github.com/Fallen-Breath/preprocessor
     id("com.replaymod.preprocess") version ("c5abb4fb12")
 
     // https://github.com/GradleUp/shadow
-    id("com.gradleup.shadow") version ("9.3.0")
+    id("com.gradleup.shadow") version ("9.3.1")
 
     // https://github.com/hierynomus/license-gradle-plugin
     id("com.github.hierynomus.license") version ("0.16.1")
 
     // https://github.com/firstdarkdev/modpublisher
-    id("com.hypherionmc.modutils.modpublisher") version ("2.1.8")
+    id("com.hypherionmc.modutils.modpublisher") version ("2.1.8+snapshot.4")
 
     `maven-publish`
 }
@@ -75,22 +75,12 @@ val javaCompatibility = if (mcVersionNumber >= 12005) {
 val mixinCompatibility = javaCompatibility
 
 loom {
-    var commonVmArgs = listOf("-Dmixin.debug.export=true")
     runConfigs.configureEach {
         runDir = "../../run/${mcVersionNumber}"
-        vmArgs(commonVmArgs)
+        vmArgs(listOf("-Dmixin.debug.export=true"))
     }
     runConfigs["server"].apply {
         ideConfigGenerated(true)
-    }
-
-    runs {
-        var auditVmArgs = commonVmArgs
-        create("serverMixinAudit") {
-            server()
-            vmArgs(auditVmArgs)
-            ideConfigGenerated(false)
-        }
     }
 
     mixin.useLegacyMixinAp = true

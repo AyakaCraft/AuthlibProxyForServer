@@ -46,6 +46,11 @@ import static com.ayakacraft.authlibproxyforserver.AuthlibProxyForServer.proxy;
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
 
+//#if MC>=12111
+import net.minecraft.commands.Commands;
+import net.minecraft.server.permissions.Permission;
+//#endif
+
 public final class AuthProxyCommand {
 
     private static final int TCPING_TIMES = 5;
@@ -61,7 +66,10 @@ public final class AuthProxyCommand {
 
     private static boolean hasOpPermissionLevel(CommandSourceStack source) {
         //#if MC>=12111
-        return source.permissions().hasPermission(new net.minecraft.server.permissions.Permission.HasCommandLevel(source.getServer().operatorUserPermissions().level()));
+        if (source.getServer() == null) { // I DONT UNDERSTAND WHY... MOJANG ALWAYS GIVES US SOME SURPRISES
+            return Commands.hasPermission(Commands.LEVEL_GAMEMASTERS).test(source);
+        }
+        return source.permissions().hasPermission(new Permission.HasCommandLevel(source.getServer().operatorUserPermissions().level()));
         //#else
         //$$ return source.hasPermission(source.getServer().operatorUserPermissionLevel());
         //#endif
