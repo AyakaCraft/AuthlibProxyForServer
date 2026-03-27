@@ -10,13 +10,13 @@ plugins {
     id("com.replaymod.preprocess") version ("c5abb4fb12")
 
     // https://github.com/GradleUp/shadow
-    id("com.gradleup.shadow") version ("9.3.1") apply (false)
+    id("com.gradleup.shadow") version ("9.4.1") apply (false)
 
     // https://github.com/hierynomus/license-gradle-plugin
     id("com.github.hierynomus.license") version ("0.16.1") apply (false)
 
     // https://github.com/firstdarkdev/modpublisher
-    id("com.hypherionmc.modutils.modpublisher") version ("2.1.8+snapshot.4") apply (false)
+    id("com.hypherionmc.modutils.modpublisher") version ("2.2.1") apply (false)
 
     `maven-publish`
 }
@@ -94,10 +94,7 @@ tasks.register("buildAndGather") {
 tasks.register("publishAll") {
     mustRunAfter(rootProject.tasks.named("buildAndGather"))
     subprojects {
-        dependsOn(
-            this.tasks.named("publishMod")
-            //, this.tasks.named("publish")
-        )
+        dependsOn(this.tasks.named("publishMod"), this.tasks.named("publish"))
     }
 }
 

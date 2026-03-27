@@ -10,13 +10,13 @@ plugins {
     id("com.replaymod.preprocess") version ("c5abb4fb12")
 
     // https://github.com/GradleUp/shadow
-    id("com.gradleup.shadow") version ("9.3.1")
+    id("com.gradleup.shadow") version ("9.4.1")
 
     // https://github.com/hierynomus/license-gradle-plugin
     id("com.github.hierynomus.license") version ("0.16.1")
 
     // https://github.com/firstdarkdev/modpublisher
-    id("com.hypherionmc.modutils.modpublisher") version ("2.1.8+snapshot.4")
+    id("com.hypherionmc.modutils.modpublisher") version ("2.2.1")
 
     `maven-publish`
 }
@@ -284,16 +284,16 @@ publishing {
 
     // select the repositories you want to publish to
     repositories {
-        // maven {
-        //     name = "AyakaCraft"
-        //     url = uri("https://mc.ayakacraft.com:7000/releases")
-        //     credentials<PasswordCredentials>(PasswordCredentials::class) {
-        //         username = "Publisher"
-        //         password = System.getenv("AYAKA_MAVEN_TOKEN")
-        //     }
-        //     authentication {
-        //         create("basic", BasicAuthentication::class)
-        //     }
-        // }
+        maven {
+            name = "AyakaCraft"
+            url = uri("https://mc.ayakacraft.com:7000/releases")
+            credentials<PasswordCredentials>(PasswordCredentials::class) {
+                username = "Publisher"
+                password = System.getenv("AYAKA_MAVEN_TOKEN")
+            }
+            authentication {
+                create("basic", BasicAuthentication::class)
+            }
+        }
     }
 }
