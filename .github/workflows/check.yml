@@ -38,3 +38,8 @@ jobs:
 
       - name: Build
         run: ./gradlew clean buildAndGather --no-daemon --warning-mode all --stacktrace
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          path: build/libs/
