@@ -174,7 +174,7 @@ tasks.jar {
     dependsOn(tasks.shadowJar)
     mustRunAfter(tasks.shadowJar)
     from(zipTree(tasks.shadowJar.get().archiveFile))
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 
     inputs.property("archives_base_name", properties["archives_base_name"])
     from(rootProject.file("LICENSE")) {

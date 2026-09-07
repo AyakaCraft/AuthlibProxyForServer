@@ -21,10 +21,10 @@ jobs:
       - name: Check Environment Variables
         run: env
 
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Set up JDK
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v6
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: 'zulu'
@@ -39,9 +39,9 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build
-        run: ./gradlew clean buildAndGather --no-daemon --warning-mode all --stacktrace
+        run: ./gradlew clean buildAndGather --no-daemon --warning-mode all
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           path: build/libs/
